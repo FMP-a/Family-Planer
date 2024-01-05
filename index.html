@@ -8,15 +8,6 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-image: url('pfad/zum/deinbild.jpg'); /* Ersetze 'pfad/zum/deinbild.jpg' durch den tatsächlichen Pfad zu deinem Bild */
-            background-size: cover; /* Damit das Bild den gesamten Bildschirm abdeckt */
-            background-position: center; /* Zentriert das Bild */
-            background-repeat: no-repeat; /* Verhindert die Wiederholung des Bildes */
-            height: 100vh; /* Füllt den gesamten Bildschirm in der Höhe aus */
-            margin: 0; /* Entfernt den Standardmargen des Body-Elements */
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .login-form {
             text-align: center;
@@ -123,9 +114,10 @@
     <div class="next-page-link">
         <a href="infos.html">Infos über der Website</a>
     </div>
-    <div class="next-page-link">
+        <div class="next-page-link">
         <a href="codefaq.html">Code FaQ</a>
     </div>
+    <div class="logout-link" id="logoutLink" onclick="logout()">Logout</div>
 </div>
 
 <script>
@@ -199,7 +191,7 @@
             loginFormContainer.style.display = 'none';
         } else {
             // Show an alert or handle invalid credentials as needed
-            alert("Invalid username or password");
+            alert("Falscher Nutzer oder Password");
         }
     }
 
