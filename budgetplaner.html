@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #total {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Budget Planer</h1>
+
+    <form id="budgetForm">
+        <label for="itemName">Artikel:</label>
+        <input type="text" id="itemName" placeholder="Artikelname" required>
+        
+        <label for="itemPrice">Preis:</label>
+        <input type="number" id="itemPrice" placeholder="Preis" required>
+
+        <button type="button" onclick="addItem()">Hinzufügen</button>
+    </form>
+
+    <table id="budgetTable">
+        <thead>
+            <tr>
+                <th>Artikel</th>
+                <th>Preis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hier werden die Artikel dynamisch eingefügt -->
+        </tbody>
+    </table>
+
+    <div id="total">Gesamtbetrag: <span id="totalAmount">0</span> Euro</div>
+
+    <script>
+        function addItem() {
+            var itemName = document.getElementById("itemName").value;
+            var itemPrice = parseFloat(document.getElementById("itemPrice").value);
+
+            if (!itemName || isNaN(itemPrice)) {
+                alert("Bitte fülle alle Felder korrekt aus.");
+                return;
+            }
+
+            // Tabelle aktualisieren
+            var table = document.getElementById("budgetTable").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            cell1.innerHTML = itemName;
+            cell2.innerHTML = itemPrice.toFixed(2) + " Euro";
+
+            // Gesamtbetrag aktualisieren
+            updateTotal();
+        }
+
+        function updateTotal() {
+            var totalAmount = 0;
+            var table = document.getElementById("budgetTable").getElementsByTagName('tbody')[0];
+
+            for (var i = 0; i < table.rows.length; i++) {
+                totalAmount += parseFloat(table.rows[i].cells[1].innerText);
+            }
+
+            document.getElementById("totalAmount").innerText = totalAmount.toFixed(2);
+        }
+    </script>
+
+</body>
+</html>
