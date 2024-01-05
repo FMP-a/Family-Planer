@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einkaufsliste</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        #homeBtn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #homeBtn:hover {
+            background-color: #2980b9;
+        }
+
+        #content {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+        }
+
+        #gekaufteProdukte {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <button id="homeBtn" onclick="redirectZuIndex()">Home</button>
+    <h1>Einkaufsliste</h1>
+</header>
+
+<div id="content">
+    <label for="neuesProdukt">Neues Produkt:</label>
+    <input type="text" id="neuesProdukt" placeholder="Produktname">
+    <button onclick="hinzufuegen()">Hinzufügen</button>
+
+    <ul id="shoppingList">
+        <!-- Hier werden die Einkaufsitems dynamisch hinzugefügt -->
+    </ul>
+
+    <h2>Gekaufte Produkte</h2>
+    <ul id="gekaufteProdukte">
+        <!-- Hier werden die gekauften Produkte dynamisch hinzugefügt -->
+    </ul>
+</div>
+
+<script>
+    var einkaufsliste = JSON.parse(localStorage.getItem('einkaufsliste')) || [
+
+        // Füge hier weitere Einkaufsitems hinzu
+    ];
+
+    var gekaufteProdukte = JSON.parse(localStorage.getItem('gekaufteProdukte')) || [];
+
+    function erstelleEinkaufsliste() {
+        var shoppingList = document.getElementById('shoppingList');
+        // Lösche vorhandene Listeneinträge
+        shoppingList.innerHTML = '';
+
+        for (var i = 0; i < einkaufsliste.length; i++) {
+            var listItem = document.createElement('li');
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'checkbox' + i;
+            checkbox.addEventListener('change', function (event) {
+                abhaken(event.target.id.substring(8));
+            });
+            listItem.appendChild(checkbox);
+
+            var label = document.createElement('label');
+            label.innerHTML = einkaufsliste[i];
+            label.setAttribute('for', 'checkbox' + i);
+            listItem.appendChild(label);
+
+            shoppingList.appendChild(listItem);
+        }
+    }
+
+    function erstelleGekaufteProdukteListe() {
+        var gekaufteProdukteList = document.getElementById('gekaufteProdukte');
+        // Lösche vorhandene Listeneinträge
+        gekaufteProdukteList.innerHTML = '';
+
+        for (var i = 0; i < gekaufteProdukte.length; i++) {
+            var listItem = document.createElement('li');
+            listItem.innerHTML = gekaufteProdukte[i];
+            gekaufteProdukteList.appendChild(listItem);
+        }
+    }
+
+    function hinzufuegen() {
+        var neuesProduktInput = document.getElementById('neuesProdukt');
+        var neuesProdukt = neuesProduktInput.value;
+
+        if (neuesProdukt.trim() !== '') {
+            einkaufsliste.push(neuesProdukt);
+            erstelleEinkaufsliste();
+            neuesProduktInput.value = '';
+            updateLocalStorage();
+        }
+    }
+
+    function abhaken(index) {
+        var gekauftesProdukt = einkaufsliste.splice(index, 1)[0];
+        gekaufteProdukte.push(gekauftesProdukt);
+        erstelleEinkaufsliste();
+        erstelleGekaufteProdukteListe();
+        updateLocalStorage();
+    }
+
+    function updateLocalStorage() {
+        localStorage.setItem('einkaufsliste', JSON.stringify(einkaufsliste));
+        localStorage.setItem('gekaufteProdukte', JSON.stringify(gekaufteProdukte));
+    }
+
+    function redirectZuIndex() {
+        window.location.href = 'index.html';
+    }
+
+    window.onload = function () {
+        erstelleEinkaufsliste();
+        erstelleGekaufteProdukteListe();
+    };
+</script>
+
+</body>
+</html>

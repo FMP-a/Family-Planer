@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essensplaner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #homeBtn {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+        #homeBtn:hover {
+            background-color: #005E7E;
+        }
+        h1 {
+            margin-top: 40px;
+        }
+        #essenListe {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        #speichernBtn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        #speichernBtn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Home-Button -->
+<button id="homeBtn" onclick="redirectZuIndex()">Home</button>
+
+<h2>n</h2>
+<h1>Essensplaner</h1>
+
+<label for="wochentag">Wochentag:</label>
+<select id="wochentag">
+    <option value="Montag">Montag</option>
+    <option value="Dienstag">Dienstag</option>
+    <option value="Mittwoch">Mittwoch</option>
+    <option value="Donnerstag">Donnerstag</option>
+    <option value="Freitag">Freitag</option>
+    <option value="Samstag">Samstag</option>
+    <option value="Sonntag">Sonntag</option>
+</select>
+
+<label for="mahlzeit">Mahlzeit:</label>
+<input type="text" id="mahlzeit" placeholder="Eingabe Mahlzeit">
+
+<button id="speichernBtn" onclick="speichern()">Speichern</button>
+
+<ul id="essenListe">
+    <!-- Hier werden die Mahlzeiten dynamisch hinzugefügt -->
+</ul>
+
+<script>
+    var essensplan = JSON.parse(localStorage.getItem('essensplan')) || {
+        Montag: '',
+        Dienstag: '',
+        Mittwoch: '',
+        Donnerstag: '',
+        Freitag: '',
+        Samstag: '',
+        Sonntag: ''
+    };
+
+    function aktualisiereEssensliste() {
+        var essenListe = document.getElementById('essenListe');
+        essenListe.innerHTML = '';
+
+        for (var tag in essensplan) {
+            var listItem = document.createElement('li');
+            listItem.innerHTML = '<strong>' + tag + ':</strong> ' + (essensplan[tag] || 'Keine Mahlzeit');
+            essenListe.appendChild(listItem);
+        }
+    }
+
+    function speichern() {
+        var wochentagSelect = document.getElementById('wochentag');
+        var mahlzeitInput = document.getElementById('mahlzeit');
+
+        var wochentag = wochentagSelect.value;
+        var mahlzeit = mahlzeitInput.value;
+
+        if (wochentag && mahlzeit) {
+            essensplan[wochentag] = mahlzeit;
+            aktualisiereEssensliste();
+            mahlzeitInput.value = '';
+
+            // Speichere den Essensplan in localStorage
+            localStorage.setItem('essensplan', JSON.stringify(essensplan));
+        } else {
+            alert('Bitte Wochentag und Mahlzeit eingeben.');
+        }
+    }
+
+    function resetEssensplan() {
+        essensplan = {
+            Montag: '',
+            Dienstag: '',
+            Mittwoch: '',
+            Donnerstag: '',
+            Freitag: '',
+            Samstag: '',
+            Sonntag: ''
+        };
+        aktualisiereEssensliste();
+
+        // Lösche den Essensplan aus localStorage
+        localStorage.removeItem('essensplan');
+    }
+
+    // Setze den Essensplan jede Woche zurück (zum Beispiel jeden Sonntag um Mitternacht)
+    setInterval(resetEssensplan, 604800000); // 604800000 Millisekunden = 7 Tage
+
+    function redirectZuIndex() {
+        window.location.href = 'index.html';
+    }
+
+    // Speichere den Essensplan, wenn die Seite geschlossen oder aktualisiert wird
+    window.addEventListener('beforeunload', function () {
+        localStorage.setItem('essensplan', JSON.stringify(essensplan));
+    });
+
+    window.onload = function () {
+        aktualisiereEssensliste();
+    };
+</script>
+
+</body>
+</html>
