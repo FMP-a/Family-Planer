@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code FAQ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .faq-container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .question {
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .answer {
+            display: none;
+            margin-bottom: 20px;
+        }
+        #homeBtn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #homeBtn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button id="homeBtn" onclick="redirectZuIndex()">Home</button>
+        <h1>FAQ</h1>
+    </header>
+    
+    
+<div class="faq-container">
+    <div class="faq-item">
+        <div class="question" onclick="toggleAnswer(1)">Frage 1: Welche Programmiersprache wurde genutzt?</div>
+        <div class="answer" id="answer1">Antwort 1: Es wurde HTML genutzt.</div>
+    </div>
+
+    <div class="faq-item">
+        <div class="question" onclick="toggleAnswer(2)">Frage 2: Hat man Packages benutzt?</div>
+        <div class="answer" id="answer2">Antwort 2: Nein.</div>
+    </div>
+
+    <div class="faq-item">
+        <div class="question" onclick="toggleAnswer(2)">Frage 3: Wie viele Zeilen brauchte man für diese Website??</div>
+        <div class="answer" id="answer2">Antwort 3: Man brauchte c.a 700 Zeilen Code und 5 Files</div>
+    </div>
+
+</div>
+
+<script>
+    function toggleAnswer(questionNumber) {
+        var answer = document.getElementById('answer' + questionNumber);
+        if (answer.style.display === 'none') {
+            answer.style.display = 'block';
+        } else {
+            answer.style.display = 'none';
+        }
+    }
+    function redirectZuIndex() {
+        window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>
