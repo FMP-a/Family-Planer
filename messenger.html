@@ -39,6 +39,8 @@
         <button id="send-button" onclick="sendMessage()">Senden</button>
     </div>
 
+    <button id="homeBtn" onclick="redirectZuIndex()">Home</button>
+    
     <script>
         function sendMessage() {
             var messageInput = document.getElementById("message-input");
@@ -52,6 +54,10 @@
                 chatContainer.scrollTop = chatContainer.scrollHeight; // Scrollen zum Ende
             }
         }
+            function redirectZuIndex() {
+        window.location.href = 'index.html';
+    }
+
     </script>
 </body>
 </html>
