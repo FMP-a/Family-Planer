@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mein Messenger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+
+        #message-input {
+            width: 70%;
+            padding: 8px;
+        }
+
+        #send-button {
+            width: 20%;
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mein Messenger</h1>
+
+    <div id="chat-container"></div>
+
+    <div>
+        <input type="text" id="message-input" placeholder="Nachricht eingeben">
+        <button id="send-button" onclick="sendMessage()">Senden</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var messageInput = document.getElementById("message-input");
+            var chatContainer = document.getElementById("chat-container");
+
+            if (messageInput.value.trim() !== "") {
+                var message = document.createElement("p");
+                message.textContent = "Du: " + messageInput.value;
+                chatContainer.appendChild(message);
+                messageInput.value = "";
+                chatContainer.scrollTop = chatContainer.scrollHeight; // Scrollen zum Ende
+            }
+        }
+    </script>
+</body>
+</html>
