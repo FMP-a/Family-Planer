@@ -114,13 +114,13 @@
     <div class="next-page-link">
         <a href="infos.html">Infos über der Website</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="codefaq.html">Code FaQ</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="budgetplaner.html">Zum Budget Planer</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="updatelogs.html">Updates</a>
     </div>
     
@@ -147,7 +147,15 @@
         termine.sort(function(a, b) {
             var dateA = new Date(a.tag);
             var dateB = new Date(b.tag);
-            return dateA - dateB;
+
+            // Vergleiche nach Jahr, dann nach Monat, dann nach Tag
+            if (dateA.getFullYear() !== dateB.getFullYear()) {
+                return dateA.getFullYear() - dateB.getFullYear();
+            } else if (dateA.getMonth() !== dateB.getMonth()) {
+                return dateA.getMonth() - dateB.getMonth();
+            } else {
+                return dateA.getDate() - dateB.getDate();
+            }
         });        
 
         for (var i = 0; i < termine.length; i++) {
@@ -224,7 +232,7 @@
             ereignisHinzufuegen();
         });
     };
-setInterval(resetIndex, 31557600000); // 604800000 Millisekunden = 7 Tage
+    setInterval(resetIndex, 31557600000); // 604800000 Millisekunden = 7 Tage
 </script>
 
 <audio controls loop autoplay>
