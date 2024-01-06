@@ -27,7 +27,7 @@
             padding: 8px;
             cursor: pointer;
         }
-                #homeBtn {
+        #homeBtn {
             background-color: #008CBA;
             color: white;
             padding: 10px 15px;
@@ -38,6 +38,19 @@
             left: 10px;
         }
         #homeBtn:hover {
+            background-color: #005E7E;
+        }
+        #infoBtn {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+        #infoBtn:hover {
             background-color: #005E7E;
         }
     </style>
@@ -52,7 +65,7 @@
         <input type="text" id="message-input" placeholder="Nachricht eingeben">
         <button id="send-button" onclick="sendMessage()">Senden</button>
          <button id="homeBtn" onclick="redirectZuIndex()">Home</button>
-        <button id="homeBtn" onclick="rediricetZuInfos()">Infos</button>
+        <button id="infoBtn" onclick="rediricetZuInfos()">Infos</button>
     </div>
     
     <script>
