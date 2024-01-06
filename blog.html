@@ -93,7 +93,12 @@
 
     // Funktionen für den Blog-Beitrag-Editor
     function openBlogEditor() {
-        document.getElementById("blog-editor").style.display = "block";
+        // Nur Admins dürfen den Blog-Editor öffnen
+        if (isAdminAuthenticated) {
+            document.getElementById("blog-editor").style.display = "block";
+        } else {
+            alert("Nur Administratoren dürfen neue Blog-Einträge erstellen.");
+        }
     }
 
     function closeBlogEditor() {
