@@ -135,6 +135,9 @@
     // Wenn gespeicherte Termine vorhanden sind, lade sie
     var termine = storedTermine ? JSON.parse(storedTermine) : [];
 
+    // Überprüfe, ob der Benutzer angemeldet ist
+    var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
     function termineHinzufuegen() {
         var table = document.getElementById('familyPlanner');
 
@@ -210,18 +213,26 @@
         });
 
         if (validUser) {
+            // Setze den Anmeldestatus auf true und speichere es im localStorage
+            isLoggedIn = true;
+            localStorage.setItem('isLoggedIn', 'true');
+
             // Display the family planner content and hide the login form
             familyPlannerContent.style.display = 'block';
             loginFormContainer.style.display = 'none';
         } else {
             // Show an alert or handle invalid credentials as needed
-            alert("Falscher Nutzer oder Password");
+            alert("Falscher Nutzer oder Passwort");
         }
     }
 
     function logout() {
         var loginFormContainer = document.getElementById('loginFormContainer');
         var familyPlannerContent = document.getElementById('familyPlannerContent');
+
+        // Setze den Anmeldestatus auf false und speichere es im localStorage
+        isLoggedIn = false;
+        localStorage.setItem('isLoggedIn', 'false');
 
         // Hide the family planner content and show the login form
         familyPlannerContent.style.display = 'none';
@@ -239,6 +250,18 @@
         if (storedTermine) {
             termine = JSON.parse(storedTermine);
             termineHinzufuegen();
+        }
+
+        // Überprüfe den Anmeldestatus und zeige/verstecke das entsprechende Element
+        var loginFormContainer = document.getElementById('loginFormContainer');
+        var familyPlannerContent = document.getElementById('familyPlannerContent');
+
+        if (isLoggedIn) {
+            familyPlannerContent.style.display = 'block';
+            loginFormContainer.style.display = 'none';
+        } else {
+            familyPlannerContent.style.display = 'none';
+            loginFormContainer.style.display = 'block';
         }
 
         var loginForm = document.getElementById('loginForm');
