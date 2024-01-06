@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontaktbuch</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input, button {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kontaktbuch</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Telefon</th>
+      </tr>
+    </thead>
+    <tbody id="contactList">
+      <!-- Kontakte werden hier dynamisch hinzugefügt -->
+    </tbody>
+  </table>
+
+  <form id="contactForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Telefon:</label>
+    <input type="tel" id="phone" name="phone">
+
+    <button type="button" onclick="addContact()">Kontakt hinzufügen</button>
+  </form>
+
+  <script>
+    // Kontakte beim Laden der Seite wiederherstellen
+    window.onload = function () {
+      var savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+      var contactList = document.getElementById('contactList');
+
+      savedContacts.forEach(function (contact) {
+        var newRow = contactList.insertRow(-1);
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+
+        cell1.innerHTML = contact.name;
+        cell2.innerHTML = contact.email;
+        cell3.innerHTML = contact.phone;
+      });
+    };
+
+    function addContact() {
+      var name = document.getElementById('name').value;
+      var email = document.getElementById('email').value;
+      var phone = document.getElementById('phone').value;
+
+      var contactList = document.getElementById('contactList');
+      var newRow = contactList.insertRow(-1);
+      var cell1 = newRow.insertCell(0);
+      var cell2 = newRow.insertCell(1);
+      var cell3 = newRow.insertCell(2);
+
+      cell1.innerHTML = name;
+      cell2.innerHTML = email;
+      cell3.innerHTML = phone;
+
+      // Kontakte im Local Storage speichern
+      var savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+      savedContacts.push({ name: name, email: email, phone: phone });
+      localStorage.setItem('contacts', JSON.stringify(savedContacts));
+
+      // Zurücksetzen des Formulars
+      document.getElementById('contactForm').reset();
+    }
+  </script>
+
+</body>
+</html>
