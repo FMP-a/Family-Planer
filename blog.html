@@ -15,7 +15,7 @@
             margin: 0 auto;
         }
 
-        #admin-section, #blog-editor, #login-form {
+        #admin-section, #blog-editor {
             display: none;
         }
     </style>
@@ -24,20 +24,6 @@
 
 <div id="blog-container">
     <h1>Blog-System</h1>
-
-    <!-- Anmeldeformular -->
-    <div id="login-form">
-        <h2>Anmelden</h2>
-        <form onsubmit="login(); return false;">
-            <label for="username">Benutzername:</label>
-            <input type="text" id="username" required>
-            <br>
-            <label for="password">Passwort:</label>
-            <input type="password" id="password" required>
-            <br>
-            <button type="submit">Anmelden</button>
-        </form>
-    </div>
 
     <!-- Admin-Bereich -->
     <div id="admin-section">
@@ -72,24 +58,6 @@
 
     // Simulation der Admin-Anmeldung
     let isAdminAuthenticated = false;
-
-    // Anmeldungsformular zu Beginn anzeigen
-    document.getElementById("login-form").style.display = "block";
-
-    // Funktionen für Anmeldung und Authentifizierung
-    function login() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username === adminCredentials.username && password === adminCredentials.password) {
-            isAdminAuthenticated = true;
-            document.getElementById("login-form").style.display = "none";
-            document.getElementById("admin-section").style.display = "block";
-            loadExistingBlogPosts();
-        } else {
-            alert("Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.");
-        }
-    }
 
     // Funktionen für den Blog-Beitrag-Editor
     function openBlogEditor() {
@@ -144,6 +112,9 @@
             blogPostsContainer.appendChild(postElement);
         });
     }
+
+    // Laden Sie die vorhandenen Blog-Beiträge beim Seitenaufruf
+    loadExistingBlogPosts();
 </script>
 
 </body>
