@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog-System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #blog-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #admin-section, #blog-editor, #login-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="blog-container">
+    <h1>Blog-System</h1>
+
+    <!-- Anmeldeformular -->
+    <div id="login-form">
+        <h2>Anmelden</h2>
+        <form onsubmit="login(); return false;">
+            <label for="username">Benutzername:</label>
+            <input type="text" id="username" required>
+            <br>
+            <label for="password">Passwort:</label>
+            <input type="password" id="password" required>
+            <br>
+            <button type="submit">Anmelden</button>
+        </form>
+    </div>
+
+    <!-- Admin-Bereich -->
+    <div id="admin-section">
+        <h2>Admin-Bereich</h2>
+        <button onclick="openBlogEditor()">Neuer Blog-Eintrag</button>
+    </div>
+
+    <!-- Blog-Beiträge -->
+    <div id="blog-posts">
+        <!-- Hier wird der Blog-Beitrag dynamisch hinzugefügt -->
+    </div>
+
+    <!-- Blog-Beitrag-Editor -->
+    <div id="blog-editor" style="display: none;">
+        <h2>Neuen Blog-Eintrag erstellen</h2>
+        <form onsubmit="submitBlogPost(); return false;">
+            <label for="title">Titel:</label>
+            <input type="text" id="title" required>
+            <br>
+            <label for="content">Inhalt:</label>
+            <textarea id="content" required></textarea>
+            <br>
+            <button type="submit">Veröffentlichen</button>
+        </form>
+        <button onclick="closeBlogEditor()">Abbrechen</button>
+    </div>
+</div>
+
+<script>
+    // Dummy-Anmeldedaten für den Admin (Mit echten Anmeldedaten aus Ihrem Backend ersetzen)
+    const adminCredentials = { username: "admin", password: "admin123" };
+
+    // Simulation der Admin-Anmeldung
+    let isAdminAuthenticated = false;
+
+    // Anmeldungsformular zu Beginn anzeigen
+    document.getElementById("login-form").style.display = "block";
+
+    // Funktionen für Anmeldung und Authentifizierung
+    function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (username === adminCredentials.username && password === adminCredentials.password) {
+            isAdminAuthenticated = true;
+            document.getElementById("login-form").style.display = "none";
+            document.getElementById("admin-section").style.display = "block";
+            loadExistingBlogPosts();
+        } else {
+            alert("Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.");
+        }
+    }
+
+    // Funktionen für den Blog-Beitrag-Editor
+    function openBlogEditor() {
+        document.getElementById("blog-editor").style.display = "block";
+    }
+
+    function closeBlogEditor() {
+        document.getElementById("blog-editor").style.display = "none";
+    }
+
+    function submitBlogPost() {
+        // Überprüfung, ob der Admin authentifiziert ist, bevor ein Blog-Beitrag eingereicht wird
+        if (isAdminAuthenticated) {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+
+            // Neues HTML-Element für den Blog-Beitrag erstellen
+            const postElement = document.createElement("div");
+            postElement.innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+
+            // Den neuen Beitrag zum Container für Blog-Beiträge hinzufügen
+            document.getElementById("blog-posts").appendChild(postElement);
+
+            // Die Eingabefelder leeren
+            document.getElementById("title").value = "";
+            document.getElementById("content").value = "";
+
+            // Den Blog-Editor schließen
+            closeBlogEditor();
+        } else {
+            alert("Bitte melden Sie sich an, um einen Blog-Eintrag zu veröffentlichen.");
+        }
+    }
+
+    // Dummy-Blog-Daten (Mit echten Daten aus Ihrem Backend ersetzen)
+    const dummyBlogData = [
+        { title: "Erster Blog-Eintrag", content: "Dies ist der Inhalt des ersten Beitrags." },
+        { title: "Ein weiterer Beitrag", content: "Dies ist ein weiterer Blog-Eintrag." }
+    ];
+
+    // Existierende Blog-Beiträge anzeigen
+    function loadExistingBlogPosts() {
+        const blogPostsContainer = document.getElementById("blog-posts");
+        dummyBlogData.forEach(post => {
+            const postElement = document.createElement("div");
+            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            blogPostsContainer.appendChild(postElement);
+        });
+    }
+</script>
+
+</body>
+</html>
