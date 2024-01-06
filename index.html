@@ -114,27 +114,26 @@
     <div class="next-page-link">
         <a href="infos.html">Infos über der Website</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="codefaq.html">Code FaQ</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="budgetplaner.html">Zum Budget Planer</a>
     </div>
-        <div class="next-page-link">
+    <div class="next-page-link">
         <a href="updatelogs.html">Updates</a>
     </div>
-    
+
     <div class="logout-link" id="logoutLink" onclick="logout()">Logout</div>
 
 </div>
 
 <script>
-    var termine = [];
-    var users = [
-        { username: "Mama", password: "0055" },
-        { username: "Papa", password: "0055" },
-        { username: "Damian", password: "Damian0912" }
-    ];
+    // Überprüfe, ob es bereits gespeicherte Termine gibt
+    var storedTermine = localStorage.getItem('termine');
+
+    // Wenn gespeicherte Termine vorhanden sind, lade sie
+    var termine = storedTermine ? JSON.parse(storedTermine) : [];
 
     function termineHinzufuegen() {
         var table = document.getElementById('familyPlanner');
@@ -148,7 +147,7 @@
             var dateA = new Date(a.tag);
             var dateB = new Date(b.tag);
             return dateA - dateB;
-        });        
+        });
 
         for (var i = 0; i < termine.length; i++) {
             var row = table.insertRow(-1);
@@ -163,8 +162,15 @@
             var checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = 'checkbox' + i;
+            checkbox.dataset.index = i;  // Speichere den Index im Dataset
+            checkbox.addEventListener('change', function () {
+                markiereAlsErledigt(this);
+            });
             cell3.appendChild(checkbox);
         }
+
+        // Speichere die aktualisierten Termine im localStorage
+        localStorage.setItem('termine', JSON.stringify(termine));
     }
 
     function ereignisHinzufuegen() {
@@ -178,6 +184,17 @@
 
         // Zurücksetzen des Formulars
         form.reset();
+    }
+
+    function markiereAlsErledigt(checkbox) {
+        var index = checkbox.dataset.index;
+
+        // Überprüfe, ob der Index gültig ist
+        if (index >= 0 && index < termine.length) {
+            // Entferne den erledigten Termin aus dem Array
+            termine.splice(index, 1);
+            termineHinzufuegen();
+        }
     }
 
     function login() {
@@ -211,7 +228,19 @@
         loginFormContainer.style.display = 'block';
     }
 
+    // Der bestehende Code zum Zurücksetzen des Index bleibt unverändert
+    setInterval(resetIndex, 31557600000); // 31557600000 Millisekunden = 1 Jahr
+
     window.onload = function () {
+        // Überprüfe beim Laden der Seite, ob es gespeicherte Termine gibt
+        var storedTermine = localStorage.getItem('termine');
+
+        // Wenn gespeicherte Termine vorhanden sind, lade sie
+        if (storedTermine) {
+            termine = JSON.parse(storedTermine);
+            termineHinzufuegen();
+        }
+
         var loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -224,7 +253,6 @@
             ereignisHinzufuegen();
         });
     };
-setInterval(resetIndex, 31557600000); // 604800000 Millisekunden = 7 Tage
 </script>
 
 <audio controls loop autoplay>
