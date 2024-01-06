@@ -62,6 +62,19 @@
         button:hover {
             background-color: #45a049;
         }
+                        #homeBtn {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+        #homeBtn:hover {
+            background-color: #005E7E;
+        }
     </style>
 </head>
 <body>
@@ -79,6 +92,7 @@
         <textarea id="instructions" name="instructions" rows="4" required></textarea>
 
         <button type="button" onclick="saveRecipe()">Rezept speichern</button>
+        <button id="homeBtn" onclick="redirectZuIndex()">Home</button>
     </form>
 
     <h2>Gespeicherte Rezepte</h2>
@@ -126,6 +140,9 @@
     }
 
     window.onload = displayRecipes;
+            function redirectZuIndex() {
+        window.location.href = 'index.html';
+    }
 </script>
 
 </body>
