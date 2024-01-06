@@ -144,12 +144,11 @@
             table.deleteRow(1);
         }
 
-        // Sortiere die Ereignisse nach dem Datum
         termine.sort(function(a, b) {
             var dateA = new Date(a.tag);
             var dateB = new Date(b.tag);
             return dateA - dateB;
-        });
+        });        
 
         for (var i = 0; i < termine.length; i++) {
             var row = table.insertRow(-1);
