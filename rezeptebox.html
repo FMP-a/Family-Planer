@@ -68,7 +68,7 @@
 
 <div class="recipe-box">
     <h1>Rezept</h1>
-    <form>
+    <form id="recipeForm">
         <label for="recipeName">Name des Rezepts:</label>
         <input type="text" id="recipeName" name="recipeName" required>
 
@@ -78,9 +78,55 @@
         <label for="instructions">Anleitung:</label>
         <textarea id="instructions" name="instructions" rows="4" required></textarea>
 
-        <button type="submit">Rezept speichern</button>
+        <button type="button" onclick="saveRecipe()">Rezept speichern</button>
     </form>
+
+    <h2>Gespeicherte Rezepte</h2>
+    <ul id="recipeList"></ul>
 </div>
+
+<script>
+    function saveRecipe() {
+        const recipeName = document.getElementById('recipeName').value;
+        const ingredients = document.getElementById('ingredients').value;
+        const instructions = document.getElementById('instructions').value;
+
+        if (recipeName && ingredients && instructions) {
+            const recipe = {
+                name: recipeName,
+                ingredients: ingredients,
+                instructions: instructions
+            };
+
+            if (typeof(Storage) !== "undefined") {
+                let savedRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+                savedRecipes.push(recipe);
+                localStorage.setItem('recipes', JSON.stringify(savedRecipes));
+                displayRecipes();
+                document.getElementById('recipeForm').reset();
+            } else {
+                alert("LocalStorage wird nicht unterstützt. Rezepte können nicht gespeichert werden.");
+            }
+        } else {
+            alert("Bitte fülle alle Felder aus, um das Rezept zu speichern.");
+        }
+    }
+
+    function displayRecipes() {
+        const recipeList = document.getElementById('recipeList');
+        recipeList.innerHTML = "";
+
+        let savedRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+
+        savedRecipes.forEach(recipe => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${recipe.name}</strong>: ${recipe.ingredients}<br>${recipe.instructions}`;
+            recipeList.appendChild(li);
+        });
+    }
+
+    window.onload = displayRecipes;
+</script>
 
 </body>
 </html>
