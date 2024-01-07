@@ -1,195 +1,225 @@
-<!DOCTYPE html>
-<html lang="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
+"http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris</title>
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        canvas {
-            border: 1px solid #000;
-        }
-    </style>
+<title>HTML5 Tetris</title>
+<script type="text/javscript" src="base.js"></script>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery.hotkeys.js"></script>
+<script type="text/javascript" src="key_status.js"></script>
 </head>
 <body>
-    <button id="startButton">Start Game</button>
-    <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+<canvas id="myCanvas" width="400" height="400" style="border:1px solid #c3c3c3;">
+Your browser does not support the canvas element.
+</canvas>
+<div id="points" style="font-size:20pt"></div>
+<script type="text/javascript">
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+var FPS = 60;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('tetrisCanvas');
-            const ctx = canvas.getContext('2d');
-            const blockSize = 30;
-            const rows = canvas.height / blockSize;
-            const cols = canvas.width / blockSize;
-            let board = Array.from({ length: rows }, () => Array(cols).fill(0));
-            let gameInterval;
+var CANVAS_WIDTH = 400;
+var CANVAS_HEIGHT = 400;
 
-            function drawBlock(x, y, color) {
-                ctx.fillStyle = color;
-                ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
-                ctx.strokeStyle = '#000';
-                ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
-            }
+var objectColor = "rgb(100,200,200)";
+ctx.fillStyle = objectColor;
 
-            function drawBoard() {
-                for (let row = 0; row < rows; row++) {
-                    for (let col = 0; col < cols; col++) {
-                        const color = board[row][col];
-                        if (color) {
-                            drawBlock(col, row, color);
-                        }
-                    }
-                }
-            }
+var objectExists = 0;
+var xpos = 0;
+var ypos  = 0;
+var otype = 0;
+var speed = 1;
+var cycle; // the param to keep track of the cycle
 
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawBoard();
-                drawCurrentPiece();
-            }
+var topcanvaspos = 0;
+var running = 0;
+var points = 0;
 
-            function drawCurrentPiece() {
-                currentPiece.shape.forEach((row, i) => {
-                    row.forEach((cell, j) => {
-                        if (cell) {
-                            drawBlock(currentPiece.x + j, currentPiece.y + i, currentPiece.color);
-                        }
-                    });
-                });
-            }
+/*
+1. square ( 50 by 50)
+2. rectangle ( 75 by 25)
+*/
 
-            function collide() {
-                for (let row = 0; row < currentPiece.shape.length; row++) {
-                    for (let col = 0; col < currentPiece.shape[row].length; col++) {
-                        if (
-                            currentPiece.shape[row][col] &&
-                            (board[currentPiece.y + row] && board[currentPiece.y + row][currentPiece.x + col]) !== 0
-                        ) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
+var height = [50, 25];
+var width = [50, 75];
 
-            function mergePiece() {
-                for (let row = 0; row < currentPiece.shape.length; row++) {
-                    for (let col = 0; col < currentPiece.shape[row].length; col++) {
-                        if (currentPiece.shape[row][col]) {
-                            board[currentPiece.y + row][currentPiece.x + col] = currentPiece.color;
-                        }
-                    }
-                }
-            }
+function initObject()
+{
+	keydown.down = false;
+	xpos = 25*Math.floor(Math.random()*((CANVAS_WIDTH-width[otype])/25 + 1));
+	ypos  = 0;
+	otype = 0;//Math.floor(Math.random()*5);
+	objectExists = 1;
+}
 
-            function rotate() {
-                const originalShape = currentPiece.shape;
-                currentPiece.shape = currentPiece.shape[0].map((_, i) => currentPiece.shape.map(row => row[i])).reverse();
-                if (collide()) {
-                    currentPiece.shape = originalShape;
-                }
-            }
+function checkForEmptiness(x, y, w, h)
+{
+	var i, j;
+	for( i=x;i<x+w;i++) {
+		for(j=y;j<y+h;j++)
+		{
+			var p = ctx.getImageData(i, j, 1, 1).data; 
+			if((p[0] != 100) && (p[1] != 200) && (p[2] != 200))
+				return false;
+		}
+	}
+	return true;
+}
 
-            function moveLeft() {
-                currentPiece.x -= 1;
-                if (collide()) {
-                    currentPiece.x += 1;
-                }
-            }
+function checkRegion(x, y, w, h)
+{
+	//alert("checking region "+x+" "+y+" "+w+" "+h);
+	var i, j;
+	for( i=x;i<x+w;i++) {
+		for(j=y;j<y+h;j++)
+		{
+			var p = ctx.getImageData(i, j, 1, 1).data; 
+			//var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+			if((p[0] == 100) && (p[1] == 200) && (p[2] == 200))
+				return false;
+		}
+	}
+	return true;
+}
 
-            function moveRight() {
-                currentPiece.x += 1;
-                if (collide()) {
-                    currentPiece.x -= 1;
-                }
-            }
+function checkObject(type, x, y, dir)
+{
+	//alert("checking");
+	if(y+height[type] >=  CANVAS_HEIGHT)
+		return false;
+	if(type == 0){
+		if(dir=="left" && !checkRegion(x-25,y,25,height[type]))	 
+			 return false;
+		if(dir=="right" && !checkRegion(x+width[type],y,25,height[type]))	 
+			 return false;
+		if(dir=="down" && !checkRegion(x,y+height[type],width[type],speed))	 
+			 return false;
+		//else alert("true");
+	}
+	return true;
+}
 
-            function moveDown() {
-                currentPiece.y += 1;
-                if (collide()) {
-                    currentPiece.y -= 1;
-                    mergePiece();
-                    resetPiece();
-                    if (collide()) {
-                        // Game over
-                        alert('Game Over!');
-                        stopGame();
-                        resetGame();
-                    }
-                }
-            }
+function clearObject(type, x, y)
+{
+	ctx.save();
+	ctx.setTransform(1,0,0,1,0,0);
+	ctx.clearRect(x,y, 50, 50);
+	ctx.restore();
+}
 
-            function resetPiece() {
-                const pieces = [
-                    { shape: [[1, 1, 1, 1]], color: 'cyan' },
-                    { shape: [[1, 1, 1], [1]], color: 'blue' },
-                    { shape: [[1, 1, 1], [0, 0, 1]], color: 'orange' },
-                    { shape: [[1, 1, 1], [1, 0, 0]], color: 'yellow' },
-                    { shape: [[1, 1], [1, 1]], color: 'red' },
-                    { shape: [[1, 1, 0], [0, 1, 1]], color: 'green' },
-                    { shape: [[0, 1, 1], [1, 1]], color: 'purple' },
-                ];
+function drawObject(type, x, y)
+{
+	ctx.fillRect(x,y, 50, 50);
+	//alert("drawn");
+}
 
-                const randomPiece = pieces[Math.floor(Math.random() * pieces.length)];
-                currentPiece = {
-                    shape: randomPiece.shape,
-                    color: randomPiece.color,
-                    x: Math.floor(cols / 2) - Math.floor(randomPiece.shape[0].length / 2),
-                    y: 0,
-                };
-            }
+function hideRows()
+{
+	for(i=topcanvaspos;i<CANVAS_HEIGHT && topcanvaspos<CANVAS_HEIGHT;i++)
+	{	
+		if( checkForEmptiness(0,i, CANVAS_WIDTH, 1))		{
+			// copying the rectangle below
+			if( i !=  topcanvaspos)
+			{
+			var imagedata = ctx.getImageData(0, topcanvaspos, CANVAS_WIDTH, i-topcanvaspos);
+			topcanvaspos++;
+			ctx.putImageData(imagedata, 0, topcanvaspos);
+			}
+			else
+			{
+				topcanvaspos++;
+			}
+			
+			// deleting the top most layer
+			ctx.clearRect(0,topcanvaspos-1, CANVAS_WIDTH, 1);	
+			points+=10;
+			$('#points').text(points);
+		}
+	}	
+//	alert("done");
+}
+function clearCanvas()
+{
+	ctx.save();
+	ctx.setTransform(1,0,0,1,0,0);
+	ctx.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	ctx.restore();
+}
 
-            function resetGame() {
-                board = Array.from({ length: rows }, () => Array(cols).fill(0));
-                draw();
-                resetPiece();
-            }
+function update()
+{
+	//alert("updating");
+	
+	if(!objectExists)
+		initObject();
+	else {
+		var tempx = xpos;
+		var tempy = ypos;
+		
+		if (keydown.left && xpos>=25) { //for moving left
+			if(checkObject(otype, xpos, ypos, "left")) {
+			xpos -= 25;
+			//clearObject(otype, xpos+2, ypos);	
+			}
+		}
+		else if (keydown.right && xpos<(CANVAS_WIDTH-width[otype])) {  // for moving right
+			if(checkObject(otype, xpos, ypos, "right")) {
+			xpos += 25;
+			//clearObject(otype, xpos-2, ypos);	
+			}
+		}
+		
+		if(keydown.down) FPS = 200;
+		else FPS = 30;
+			//alert(temp);
+		if(checkObject(otype, xpos, ypos,"down")) {			
+		ypos+=speed; 			
+		clearObject(otype, tempx, tempy);	
+		}
+		else if( ypos < 5)
+		{
+			//	clearTimeout(cycle);
+			running = 0;
+			$('#points').html("You got: "+points+ " points");
+			alert("game over");
+			
+		}
+		else  
+		{
+		topcanvaspos = ypos;
+		objectExists = 0; 
+		}
+	 }
+}
 
-            function startGame() {
-                if (!gameInterval) {
-                    gameInterval = setInterval(() => {
-                        moveDown();
-                        draw();
-                    }, 500); // Adjust the speed by changing the interval
-                }
-            }
+function draw()
+{
+	//redrawing the canvas
+	if(objectExists)
+	{		
+		drawObject(otype, xpos, ypos);
+	}
+	else
+		hideRows();
+}
 
-            function stopGame() {
-                clearInterval(gameInterval);
-                gameInterval = null;
-            }
 
-            document.getElementById('startButton').addEventListener('click', () => {
-                startGame();
-            });
+function init() {
+	if(running == 0)
+	{
+		running = 1;
+		ctx.clearRect(0,0,CANVAS_WIDTH, CANVAS_HEIGHT);
+		points = 0;
+		$('#points').html("");
+	}
+	update();
+	draw();
+	if(running)
+	setTimeout(init, 1000/FPS);
+}
 
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'ArrowUp') {
-                    rotate();
-                } else if (event.key === 'ArrowLeft') {
-                    moveLeft();
-                } else if (event.key === 'ArrowRight') {
-                    moveRight();
-                } else if (event.key === 'ArrowDown') {
-                    moveDown();
-                }
-                draw();
-            });
-
-            function update() {
-                draw();
-                requestAnimationFrame(update);
-            }
-
-            update();
-        });
-    </script>
+</script>
+<button onclick='init()'>start game</button>
 </body>
 </html>
