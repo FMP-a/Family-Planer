@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprachchat - Anmeldung</title>
+</head>
+<body>
+    <h1>Anmeldung</h1>
+
+    <div id="loginForm">
+        <label for="username">Benutzername:</label>
+        <input type="text" id="username" required>
+        <br>
+        <label for="password">Passwort:</label>
+        <input type="password" id="password" required>
+        <br>
+        <button onclick="login()">Anmelden</button>
+    </div>
+
+    <div id="chatbox" style="display:none;"></div>
+    <div id="chatControls" style="display:none;">
+        <button id="startBtn" disabled>Starte Spracheingabe</button>
+        <button id="stopBtn" disabled>Stoppe Spracheingabe</button>
+        <button onclick="logout()">Abmelden</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentUser = username;
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('chatbox').style.display = 'block';
+                    document.getElementById('chatControls').style.display = 'block';
+                } else {
+                    alert('Anmeldung fehlgeschlagen. Benutzername oder Passwort ist falsch.');
+                }
+            })
+            .catch(error => console.error('Fehler beim Anmelden:', error));
+        }
+
+        function logout() {
+            fetch('http://localhost:3000/logout')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentUser = null;
+                    document.getElementById('loginForm').style.display = 'block';
+                    document.getElementById('chatbox').style.display = 'none';
+                    document.getElementById('chatControls').style.display = 'none';
+                } else {
+                    console.error('Fehler beim Abmelden:', data.message);
+                }
+            })
+            .catch(error => console.error('Fehler beim Abmelden:', error));
+        }
+    </script>
+</body>
+</html>
