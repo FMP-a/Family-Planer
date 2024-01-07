@@ -1,100 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KI Chat</title>
-  <style>
-    #chat-container {
-      max-width: 400px;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Chatbot mit OpenAI API</title>
+    <style>
+        #chat-container {
+            width: 300px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+            max-height: 300px;
+        }
 
-    #messages {
-      height: 300px;
-      overflow-y: scroll;
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    #input-container {
-      display: flex;
-    }
-
-    #user-input {
-      flex: 1;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    #send-button {
-      margin-left: 8px;
-      padding: 8px 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  </style>
+        #user-input {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<div id="chat-container">
-  <div id="messages"></div>
-  <div id="input-container">
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <button id="send-button" onclick="sendMessage()">Send</button>
-  </div>
-</div>
+<div id="chat-container"></div>
+<input type="text" id="user-input" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
 
 <script>
-  const apiKey = 'asst_o0kLwtIOrApoS5cO3Mgg1Gx3';
-  const apiUrl = 'https://api.openai.com/v1/chat/completions';
+    async function sendMessage() {
+        var userMessage = document.getElementById('user-input').value;
+        if (userMessage.trim() === '') return;
 
-  async function sendMessage() {
-    var userInput = document.getElementById("user-input").value;
-    appendMessage("user", userInput);
+        appendMessage('You: ' + userMessage, 'user');
+        document.getElementById('user-input').value = '';
 
-    // KI-Verarbeitung mit der ChatGPT-API
-    const aiResponse = await getAIResponse(userInput);
-    appendMessage("AI", aiResponse.choices[0].message.content);
+        // Hier senden wir die Benutzeranfrage an die OpenAI API
+        var botResponse = await getOpenAIResponse(userMessage);
 
-    // Optional: Löschen Sie die Benutzereingabe nach dem Senden
-    document.getElementById("user-input").value = "";
-  }
+        appendMessage('Bot: ' + botResponse.choices[0].text.trim(), 'bot');
+    }
 
-  async function getAIResponse(userInput) {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5',
-        messages: [{role: 'system', content: 'You are a helpful assistant.'}, {role: 'user', content: userInput}]
-      })
-    });
+    async function getOpenAIResponse(userMessage) {
+        var apiKey = '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';
+        var endpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions'; // Beispiel-Endpunkt für GPT-3
 
-    return response.json();
-  }
+        var response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + apiKey,
+            },
+            body: JSON.stringify({
+                prompt: userMessage,
+                max_tokens: 150,
+            }),
+        });
 
-  function appendMessage(sender, message) {
-    var messagesContainer = document.getElementById("messages");
-    var newMessage = document.createElement("div");
-    newMessage.className = sender.toLowerCase() + "-message";
-    newMessage.innerHTML = "<strong>" + sender + ":</strong> " + message;
-    messagesContainer.appendChild(newMessage);
+        var data = await response.json();
+        return data;
+    }
 
-    // Scrollen Sie automatisch nach unten, um die neueste Nachricht anzuzeigen
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  }
+    function appendMessage(message, sender) {
+        var chatContainer = document.getElementById('chat-container');
+        var messageElement = document.createElement('div');
+        messageElement.textContent = message;
+
+        if (sender === 'user') {
+            messageElement.style.textAlign = 'right';
+            messageElement.style.color = 'blue';
+        } else {
+            messageElement.style.textAlign = 'left';
+            messageElement.style.color = 'green';
+        }
+
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 </script>
 
 </body>
