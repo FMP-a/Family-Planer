@@ -18,6 +18,7 @@
     </style>
 </head>
 <body>
+    <button id="startButton">Start Game</button>
     <canvas id="tetrisCanvas" width="300" height="600"></canvas>
 
     <script>
@@ -27,8 +28,8 @@
             const blockSize = 30;
             const rows = canvas.height / blockSize;
             const cols = canvas.width / blockSize;
-
             let board = Array.from({ length: rows }, () => Array(cols).fill(0));
+            let gameInterval;
 
             function drawBlock(x, y, color) {
                 ctx.fillStyle = color;
@@ -119,6 +120,7 @@
                     if (collide()) {
                         // Game over
                         alert('Game Over!');
+                        stopGame();
                         resetGame();
                     }
                 }
@@ -150,8 +152,23 @@
                 resetPiece();
             }
 
-            let currentPiece;
-            resetGame();
+            function startGame() {
+                if (!gameInterval) {
+                    gameInterval = setInterval(() => {
+                        moveDown();
+                        draw();
+                    }, 500); // Adjust the speed by changing the interval
+                }
+            }
+
+            function stopGame() {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+
+            document.getElementById('startButton').addEventListener('click', () => {
+                startGame();
+            });
 
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'ArrowUp') {
@@ -167,7 +184,6 @@
             });
 
             function update() {
-                moveDown();
                 draw();
                 requestAnimationFrame(update);
             }
